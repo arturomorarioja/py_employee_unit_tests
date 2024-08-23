@@ -131,7 +131,7 @@ def test_educational_level_fails(educational_level_fails, employee):
 
 # Date of birth passes
 dobs = []
-eighteen_years_ago = date.today() - relativedelta(years=18)
+eighteen_years_ago = date.today() - relativedelta(years=18) # AMR: This test caught a bug. I was using >= instead of >
 dobs.append(f'{eighteen_years_ago.day}/{eighteen_years_ago.month}/{eighteen_years_ago.year}')
 eya_minus_one_day = eighteen_years_ago - relativedelta(days=1)
 dobs.append(f'{eya_minus_one_day.day}/{eya_minus_one_day.month}/{eya_minus_one_day.year}')
@@ -196,3 +196,49 @@ does.append('999')
 def test_date_of_employment_fails(date_of_employment_fails, employee):
     employee.date_of_employment = date_of_employment_fails
     assert employee.date_of_employment == ''
+
+@pytest.mark.parametrize('base_salary,educational_level,expected_salary', [
+    (30000, 0, 30000),
+    (30000, 1, 31220),
+    (30000, 2, 32440),
+    (30000, 3, 33660),
+    (10000, 0, 0),
+    (110000, 0, 0),
+])    
+def test_salary(base_salary, educational_level, expected_salary, employee):
+    employee.base_salary = base_salary
+    employee.educational_level = educational_level
+    assert employee.get_salary() == expected_salary
+
+# Discount calculation
+does = []
+does.append((f'{today.day}/{today.month}/{today.year}', 0))
+t_minus_one_year = today - relativedelta(years=1)
+does.append((f'{t_minus_one_year.day}/{t_minus_one_year.month}/{t_minus_one_year.year}', 0.5))
+t_minus_ten_years = today - relativedelta(years=10)
+does.append((f'{t_minus_ten_years.day}/{t_minus_ten_years.month}/{t_minus_ten_years.year}', 5))
+t_minus_fifteen_years = today - relativedelta(years=15)
+does.append((f'{t_minus_fifteen_years.day}/{t_minus_fifteen_years.month}/{t_minus_fifteen_years.year}', 7.5))
+t_minus_twenty_three_years = today - relativedelta(years=23)
+does.append((f'{t_minus_twenty_three_years.day}/{t_minus_twenty_three_years.month}/{t_minus_twenty_three_years.year}', 11.5))
+
+@pytest.mark.parametrize('date_of_employment,expected_discount', does)
+def test_discount(date_of_employment, expected_discount, employee):
+    employee.date_of_employment = date_of_employment
+    assert employee.get_discount() == expected_discount
+
+@pytest.mark.parametrize('country, expected_shipping_costs', [
+    ('Denmark', 0),
+    ('Norway', 0),
+    ('Sweden', 0),
+    ('Iceland', 50),
+    ('Finland', 50),
+    ('DENMARK', 100),
+    ('Spain', 100),
+    ('ABCDEFG', 100),
+    # (0, 100),
+    # (True, 100),
+])
+def test_shipping_costs(country, expected_shipping_costs, employee):
+    employee.country = country
+    assert employee.get_shipping_costs() == expected_shipping_costs
