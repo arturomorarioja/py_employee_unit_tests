@@ -7,7 +7,7 @@ lene.last_name = 'Johansen'
 lene.department = 'HR'
 lene.base_salary = 35045.98
 lene.educational_level = 2
-lene.date_of_birth = '15/2/1976'
+lene.date_of_birth = '23/8/2006'
 lene.date_of_employment = '26/7/2022'
 lene.country = 'Iceland'
 print(f'''

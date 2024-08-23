@@ -123,7 +123,7 @@ class Employee(EmployeeConstants):
             return False
 
         # The date of birth must be at least 18 years before now
-        if dob + relativedelta(years=18) >= date.today():
+        if dob + relativedelta(years=18) > date.today():
             return False
         self.__date_of_birth = dob
         return True

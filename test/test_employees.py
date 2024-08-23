@@ -1,6 +1,7 @@
 from app.employees import Employee
 import pytest
-from pytest import approx
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 @pytest.fixture
 def employee():
@@ -127,3 +128,71 @@ def test_educational_level_passes(educational_level_passes, educational_level_na
 def test_educational_level_fails(educational_level_fails, employee):
     employee.educational_level = educational_level_fails
     assert employee.educational_level == ''
+
+# Date of birth passes
+dobs = []
+eighteen_years_ago = date.today() - relativedelta(years=18)
+dobs.append(f'{eighteen_years_ago.day}/{eighteen_years_ago.month}/{eighteen_years_ago.year}')
+eya_minus_one_day = eighteen_years_ago - relativedelta(days=1)
+dobs.append(f'{eya_minus_one_day.day}/{eya_minus_one_day.month}/{eya_minus_one_day.year}')
+eya_minus_ten_days = eighteen_years_ago - relativedelta(days=10)
+dobs.append(f'{eya_minus_ten_days.day}/{eya_minus_ten_days.month}/{eya_minus_ten_days.year}')
+eya_minus_eight_years = eighteen_years_ago - relativedelta(years=8)
+dobs.append(f'{eya_minus_eight_years.day}/{eya_minus_eight_years.month}/{eya_minus_eight_years.year}')
+
+@pytest.mark.parametrize('date_of_birth_passes', dobs)
+def test_date_of_birth_passes(date_of_birth_passes, employee):
+    employee.date_of_birth = date_of_birth_passes
+    day, month, year = map(int, date_of_birth_passes.split('/'))
+    assert employee.date_of_birth == date(year, month, day)
+
+# Date of birth fails
+dobs = []
+eya_plus_one_day = eighteen_years_ago + relativedelta(days=1)
+dobs.append(f'{eya_plus_one_day.day}/{eya_plus_one_day.month}/{eya_plus_one_day.year}')
+eya_plus_ten_days = eighteen_years_ago + relativedelta(days=10)
+dobs.append(f'{eya_plus_ten_days.day}/{eya_plus_ten_days.month}/{eya_plus_ten_days.year}')
+eya_plus_eight_years = eighteen_years_ago + relativedelta(years=8)
+dobs.append(f'{eya_plus_eight_years.day}/{eya_plus_eight_years.month}/{eya_plus_eight_years.year}')
+dobs.append('30/2/1914')
+dobs.append('')
+dobs.append('999')
+
+@pytest.mark.parametrize('date_of_birth_fails', dobs)
+def test_date_of_birth_fails(date_of_birth_fails, employee):
+    employee.date_of_birth = date_of_birth_fails
+    assert employee.date_of_birth == ''
+
+# Date of employment passes
+does = []
+today = date.today()
+does.append(f'{today.day}/{today.month}/{today.year}')
+yesterday = today - relativedelta(days=1)
+does.append(f'{yesterday.day}/{yesterday.month}/{yesterday.year}')
+t_minus_ten_days = today - relativedelta(days=10)
+does.append(f'{t_minus_ten_days.day}/{t_minus_ten_days.month}/{t_minus_ten_days.year}')
+t_minus_eight_years = today - relativedelta(years=8)
+does.append(f'{t_minus_eight_years.day}/{t_minus_eight_years.month}/{t_minus_eight_years.year}')
+
+@pytest.mark.parametrize('date_of_employment_passes', does)
+def test_date_of_employment_passes(date_of_employment_passes, employee):
+    employee.date_of_employment = date_of_employment_passes
+    day, month, year = map(int, date_of_employment_passes.split('/'))
+    assert employee.date_of_employment == date(year, month, day)
+
+# Date of employment fails
+does = []
+tomorrow = today + relativedelta(days=1)
+does.append(f'{tomorrow.day}/{tomorrow.month}/{tomorrow.year}')
+t_plus_ten_days = today + relativedelta(days=10)
+does.append(f'{t_plus_ten_days.day}/{t_plus_ten_days.month}/{t_plus_ten_days.year}')
+t_plus_eight_years = today + relativedelta(years=8)
+does.append(f'{t_plus_eight_years.day}/{t_plus_eight_years.month}/{t_plus_eight_years.year}')
+does.append('30/2/1914')
+does.append('')
+does.append('999')
+
+@pytest.mark.parametrize('date_of_employment_fails', does)
+def test_date_of_employment_fails(date_of_employment_fails, employee):
+    employee.date_of_employment = date_of_employment_fails
+    assert employee.date_of_employment == ''
