@@ -20,7 +20,7 @@ def test_cpr_passes(cpr_passes, employee):
     assert cpr_passes == employee.cpr
 
 @pytest.mark.parametrize('cpr_fails', [
-    '99999999999',  # Invalid upper boundary
+    '10000000000',  # Invalid upper boundary
     '999999999',    # Invalid lower boundary
     'ABCDEFGHIJ',
     '          ',
@@ -235,9 +235,7 @@ def test_discount(date_of_employment, expected_discount, employee):
     ('Finland', 50),
     ('DENMARK', 100),
     ('Spain', 100),
-    ('ABCDEFG', 100),
-    # (0, 100),
-    # (True, 100),
+    ('ABCDEFG', 100)
 ])
 def test_shipping_costs(country, expected_shipping_costs, employee):
     employee.country = country
