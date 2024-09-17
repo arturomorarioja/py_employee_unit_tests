@@ -18,8 +18,8 @@ def test_cpr_passes(cpr_passes, employee):
     employee.cpr = cpr_passes
     assert cpr_passes == employee.cpr
 
-# This negative test cannot be included in the negative tests
-#  parameterised test, as the assertion would fail
+# This negative test cannot be included in the negative tests'
+# parameterised test, as the assertion would fail
 def test_empty_cpr_fails(employee):
     employee.cpr = ''
     assert employee.cpr == ''
@@ -51,7 +51,6 @@ NAMES_PASS = ('name_passes', [
     'a-a-a-a-a-a-a',
     '-',
     ' ',
-    ''                                  # Invalid lower boundary, but the method must return an empty string
 ])
 
 @pytest.mark.parametrize(*NAMES_PASS)
@@ -81,12 +80,27 @@ def test_last_name_fails(name_fails, employee):
     employee.last_name = name_fails
     assert not name_fails == employee.last_name
 
+# The next two negative tests (invalid lower boundary) 
+# cannot be included in the negative tests'
+# parameterised test, as the assertion would fail
+def test_empty_first_name_fails(employee):
+    employee.first_name = ''
+    assert employee.first_name == ''
+
+def test_empty_last_name_fails(employee):
+    employee.last_name = ''
+    assert employee.last_name == ''
+
 @pytest.mark.parametrize('department_passes', [
-    'HR', 'Finance', 'IT', 'Sales', 'General Services', ''
+    'HR', 'Finance', 'IT', 'Sales', 'General Services'
 ])
 def test_department_passes(department_passes, employee):
     employee.department = department_passes
     assert department_passes == employee.department
+
+def test_department_fails(employee):
+    employee.department = ''
+    assert employee.department == ''
 
 def test_department_fails(employee):
     fake_department = 'Bonds'
@@ -99,7 +113,6 @@ def test_department_fails(employee):
     60000,          # Middle value for the valid input partition
     100000,         # Valid upper boundary
     99999.99,       # Valid upper boundary - 1 (3-value approach)
-    0,              # Invalid value, but the method must return a zero in this case
 ])
 def test_base_salary_passes(base_salary_passes, employee):
     employee.base_salary = base_salary_passes
@@ -116,6 +129,12 @@ def test_base_salary_passes(base_salary_passes, employee):
 def test_base_salary_fails(base_salary_fails, employee):
     employee.base_salary = base_salary_fails
     assert not base_salary_fails == employee.base_salary
+
+# This negative test cannot be included in the negative tests'
+# parameterised test, as the assertion would fail
+def test_base_salary_zero_fails(employee):
+    employee.base_salary = 0
+    assert employee.base_salary == 0
 
 @pytest.mark.parametrize('educational_level_passes, educational_level_name', [
     (0, 'None'),
@@ -240,7 +259,8 @@ def test_discount(date_of_employment, expected_discount, employee):
     ('Finland', 50),
     ('DENMARK', 100),
     ('Spain', 100),
-    ('ABCDEFG', 100)
+    ('ABCDEFG', 100),
+    ('', 100),
 ])
 def test_shipping_costs(country, expected_shipping_costs, employee):
     employee.country = country
