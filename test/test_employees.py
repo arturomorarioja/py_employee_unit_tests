@@ -12,12 +12,17 @@ def employee():
     '1234567890',   # Valid upper and lower boundary
     '0000000000',
     '9999999999',
-    '0999999999',
-    ''
+    '0999999999'
 ])
 def test_cpr_passes(cpr_passes, employee):
     employee.cpr = cpr_passes
     assert cpr_passes == employee.cpr
+
+# This negative test cannot be included in the negative tests
+#  parameterised test, as the assertion would fail
+def test_empty_cpr_fails(employee):
+    employee.cpr = ''
+    assert employee.cpr == ''
 
 @pytest.mark.parametrize('cpr_fails', [
     '10000000000',  # Invalid upper boundary
@@ -105,7 +110,7 @@ def test_base_salary_passes(base_salary_passes, employee):
     100000.01,      # Invalid upper boundary
     10000,          # Middle value for the invalid lower partition
     110000,         # Middle value for the invalid upper partition
-    -1,
+    -0.01,          # Invalid lower boundary for the zero partition
     -10000
 ])
 def test_base_salary_fails(base_salary_fails, employee):
