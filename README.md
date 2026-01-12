@@ -23,9 +23,6 @@ Public methods:
 `Discount = years of employment * 0,5`
 - `get_shipping_costs()` calculates and returns the shipping cost percentage, taking into account that  employees  from  Denmark,  Norway  and  Sweden  do  not  pay  shipping  costs,  employees  from  Iceland  and Finland pay 50%, and employees from other countries pay 100%
 
-## Installation
-The Python packages `pytest` and `python-dateutil` need to be installed.
-
 ## Tools
 Pytest / Python
 
