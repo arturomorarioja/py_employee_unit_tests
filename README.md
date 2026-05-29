@@ -23,6 +23,12 @@ Public methods:
 `Discount = years of employment * 0,5`
 - `get_shipping_costs()` calculates and returns the shipping cost percentage, taking into account that  employees  from  Denmark,  Norway  and  Sweden  do  not  pay  shipping  costs,  employees  from  Iceland  and Finland pay 50%, and employees from other countries pay 100%
 
+## Usage
+1. Create a Python virtual environment: `python -m venv venv`
+2. Activate it: `venv\Scripts\activate`, `.\venv\Scripts\Activate`, `source venv/bin/activate`, depending on OS and CLI
+3. Install the dependencies: `pip install -r requirements.txt`
+4. Run the tests: `pytest`
+
 ## Tools
 Pytest / Python
 
