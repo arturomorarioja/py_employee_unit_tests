@@ -1,4 +1,5 @@
 from app.employees import Employee
+import sys
 import pytest
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -8,8 +9,17 @@ def employee():
     employee = Employee()
     yield employee
 
+#   CPR                                Middle value  Boundary values
+#   ---------------------------------- ------------- --------------------------------------------------------
+#   Invalid partition: empty           empty         empty | 1 character 
+#   Invalid partition: 1-9 characters  5 characters  empty | 1 character | 2 characters
+#                                                    8 characters | 9 characters | 10 characters
+#   Valid partition:   10 characters   10 characters 9 characters | 10 characters | 11 characters
+#   Invalid partition: > 10 characters 15 characters 10 characters | 11 characters | 12 characters
+
+# CPR positive tests
 @pytest.mark.parametrize('cpr_passes', [
-    '1234567890',   # Valid upper and lower boundary
+    '1234567890',   # 10 characters
     '0000000000',
     '9999999999',
     '0999999999'
@@ -18,39 +28,55 @@ def test_cpr_passes(cpr_passes, employee):
     employee.cpr = cpr_passes
     assert cpr_passes == employee.cpr
 
+# CPR negative tests
+@pytest.mark.parametrize('cpr_fails', [
+    '1',            # 1 character
+    '12',           # 2 characters
+    '12345678',     # 8 characters
+    '123456789',    # 9 characters
+    '10000000000',  # 11 characters
+    '100000000000', # 12 characters
+    'ABCDEFGHIJ',   # Format / Edge case
+    '          ',   # Format / Edge case
+])
+def test_cpr_fails(cpr_fails, employee):
+    employee.cpr = cpr_fails
+    assert not cpr_fails == employee.cpr
+
 # This negative test cannot be included in the negative tests'
 # parameterised test, as the assertion would fail
 def test_empty_cpr_fails(employee):
     employee.cpr = ''
     assert employee.cpr == ''
 
-@pytest.mark.parametrize('cpr_fails', [
-    '10000000000',  # Invalid upper boundary
-    '999999999',    # Invalid lower boundary
-    'ABCDEFGHIJ',
-    '          ',
-])
-def test_cpr_fails(cpr_fails, employee):
-    employee.cpr = cpr_fails
-    assert not cpr_fails == employee.cpr
 
+#   First and last name                Middle value  Boundary values
+#   ---------------------------------- ------------- --------------------------------------------------------
+#   Invalid partition: empty           empty         empty | 1 character 
+#   Valid partition: 1-30 characters   15 characters empty | 1 character | 2 characters
+#                                      29 characters | 30 characters | 31 characters 
+#   Invalid partition: > 30 characters 45 characters | 31 characters | 32 characters
+
+# First and last name positive tests
 NAMES_PASS = ('name_passes', [
-    'A',                                # Valid lower boundary
-    'AB',                               # Valid lower boundary + 1 (3-value approach)
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZABCD',   # Valid upper boundary
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZABC',    # Valid upper boundary - 1 (3-value approach)
-    'ABCDEFGHIJKLMN',                   # Middle partition value
-    'abcdefghijklmn',                   # Middle partition value
-    'æøåñç',
-    'áéíóúàèìòùäëïöü',
-    'âêîôû',
-    'ÆØÅÑÇ',
-    'ÁÉÍÓÚÀÈÌÒÙÄËÏÖÜ',
-    'ÂÊÎÔÛ',
-    'a a a a a a a',
-    'a-a-a-a-a-a-a',
-    '-',
-    ' ',
+    'A',                                # 1 character
+    'AB',                               # 2 characters
+    'ABCDEFGHIJKLMNO',                  # 15 characters
+    'abcdefghijklmno',                  # 15 characters
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZABC',    # 29 characters
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZABCD',   # 30 characters
+    'æøåñç',                            # Format
+    'áéíóúàèìòùäëïöü',                  # Format
+    'âêîôû',                            # Format
+    'ÆØÅÑÇ',                            # Format
+    'ÁÉÍÓÚÀÈÌÒÙÄËÏÖÜ',                  # Format
+    'ÂÊÎÔÛ',                            # Format
+    # The following cases are unlikely to be valid, but they are according to requirements.
+    # In a real company scenario, the person(s) in charge of writing requirements should be contacted to clarify the situation
+    'a a a a a a a',                    # Format
+    'a-a-a-a-a-a-a',                    # Format
+    '-',                                # Format
+    ' ',                                # Format
 ])
 
 @pytest.mark.parametrize(*NAMES_PASS)
@@ -63,11 +89,13 @@ def test_last_name_passes(name_passes, employee):
     employee.last_name = name_passes
     assert name_passes == employee.last_name
 
+# First and last name negative tests
 NAMES_FAIL = ('name_fails', [
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE',  # Invalid upper boundary
-    'abcdef1',
-    'abcdef/',
-    'abcdef,'
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE',                  # 31 characters
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRS',    # 45 characters
+    'abcdef1',                                          # Format / Edge case
+    'abcdef/',                                          # Format / Edge case
+    'abcdef,'                                           # Format / Edge case
 ])
 
 @pytest.mark.parametrize(*NAMES_FAIL)
@@ -80,9 +108,8 @@ def test_last_name_fails(name_fails, employee):
     employee.last_name = name_fails
     assert not name_fails == employee.last_name
 
-# The next two negative tests (invalid lower boundary) 
-# cannot be included in the negative tests'
-# parameterised test, as the assertion would fail
+# The next two negative tests cannot be included in the 
+# negative tests' parameterised test, as the assertion would fail
 def test_empty_first_name_fails(employee):
     employee.first_name = ''
     assert employee.first_name == ''
@@ -91,6 +118,11 @@ def test_empty_last_name_fails(employee):
     employee.last_name = ''
     assert employee.last_name == ''
 
+
+#   Department
+#   There are so few that testing all of them is not costly
+
+# Department positive tests
 @pytest.mark.parametrize('department_passes', [
     'HR', 'Finance', 'IT', 'Sales', 'General Services'
 ])
@@ -98,6 +130,7 @@ def test_department_passes(department_passes, employee):
     employee.department = department_passes
     assert department_passes == employee.department
 
+# Department negative tests
 def test_department_fails(employee):
     employee.department = ''
     assert employee.department == ''
@@ -107,24 +140,50 @@ def test_department_fails(employee):
     employee.department = fake_department
     assert not fake_department == employee.department
 
+
+#   Base salary                                Middle value  Boundary values
+#   ------------------------------------------ ------------- --------------------------------------------------------
+#   Invalid partition: -MAX FLOAT- -0.01           -10000 kr  -MAX FLOAT - 0.01 | -MAX FLOAT | -MAX FLOAT + 0.01
+#                                                             -0.02 | -0.01 | 0
+#   Invalid partition: 0                                0     -0.01 | 0 | 0.01
+#   Invalid partition: 0.01-19999.99 kr             10000 kr  0 | 0.01 | 0.02
+#                                                             19999.98 | 19999.99 | 20000
+#   Valid partition: 20000-100000 kr                60000 kr  19999.99 | 20000 | 20000.01
+#                                                             999999.99 | 100000 | 100000.01
+#   Invalid partition: 100000.01-MAX FLOAT kr      120000 kr  100000 | 100000.01 | 100000.02
+#                                                             MAX FLOAT - 0.01 | MAX FLOAT | MAX FLOAT + 0.01
+
+# Base salary positive tests
 @pytest.mark.parametrize('base_salary_passes', [
-    20000,          # Valid lower boundary
-    20000.01,       # Valid lower boundary + 1 (3-value approach)
-    60000,          # Middle value for the valid input partition
-    100000,         # Valid upper boundary
-    99999.99,       # Valid upper boundary - 1 (3-value approach)
+    20000,          # Valid partition: Valid lower boundary
+    20000.01,       # Valid partition: Valid lower boundary + 1 (3-value approach)
+    60000,          # Valid partition: Middle value
+    100000,         # Valid partition: Valid upper boundary
+    99999.99,       # Valid partition: Valid upper boundary - 1 (3-value approach)
 ])
 def test_base_salary_passes(base_salary_passes, employee):
     employee.base_salary = base_salary_passes
     assert base_salary_passes == employee.base_salary
 
+# Base salary negative tests
 @pytest.mark.parametrize('base_salary_fails', [
-    19999.99,       # Invalid lower boundary
-    100000.01,      # Invalid upper boundary
-    10000,          # Middle value for the invalid lower partition
-    110000,         # Middle value for the invalid upper partition
-    -0.01,          # Invalid lower boundary for the zero partition
+    -sys.float_info.max - 0.01,
+    -sys.float_info.max,
+    -sys.float_info.max + 0.01,
     -10000
+    -0.02,          
+    -0.01,          
+    0.01,
+    0.02,
+    10000,          
+    19999.98,
+    19999.99,
+    100000.01,      
+    100000.02,      
+    120000,
+    sys.float_info.max - 0.01,
+    sys.float_info.max,
+    sys.float_info.max + 0.01,
 ])
 def test_base_salary_fails(base_salary_fails, employee):
     employee.base_salary = base_salary_fails
@@ -136,6 +195,11 @@ def test_base_salary_zero_fails(employee):
     employee.base_salary = 0
     assert employee.base_salary == 0
 
+
+#   Educational level
+#   There are so few that testing all of them is not costly
+
+# Educational level positive tests
 @pytest.mark.parametrize('educational_level_passes, educational_level_name', [
     (0, 'None'),
     (1, 'Primary'),
@@ -146,14 +210,22 @@ def test_educational_level_passes(educational_level_passes, educational_level_na
     employee.educational_level = educational_level_passes
     assert educational_level_name == employee.educational_level
 
-@pytest.mark.parametrize('educational_level_fails', [
-    -1, 4, 10, -10
+# Educational level positive tests
+@pytest.mark.parametrize('educational_level_fails', [    
+    # Random invalid values covering boundary values (-1, 4) and middle partition values (-10, 10)
+    -1, 4, 10, -10  
 ])
 def test_educational_level_fails(educational_level_fails, employee):
     employee.educational_level = educational_level_fails
     assert employee.educational_level == ''
 
-# Date of birth passes
+#   Date of birth
+#   Testing non-deterministic data is complicated. Here the date of birth must be compared to the present date, which changes daily.
+#   One approach is to calculate several dates relative to today 
+#   (in the past, in the future, 18 years ago, right before 18 years ago, right after 18 years ago).
+#   Unfortunately, it enforces an anti-pattern: calculations taking place in a unit test
+
+# Date of birth positive tests
 dobs = []
 eighteen_years_ago = date.today() - relativedelta(years=18) # AMR: This test caught a bug. I was using >= instead of >
 dobs.append(f'{eighteen_years_ago.day}/{eighteen_years_ago.month}/{eighteen_years_ago.year}')
@@ -170,7 +242,7 @@ def test_date_of_birth_passes(date_of_birth_passes, employee):
     day, month, year = map(int, date_of_birth_passes.split('/'))
     assert employee.date_of_birth == date(year, month, day)
 
-# Date of birth fails
+# Date of birth negative tests
 dobs = []
 eya_plus_one_day = eighteen_years_ago + relativedelta(days=1)
 dobs.append(f'{eya_plus_one_day.day}/{eya_plus_one_day.month}/{eya_plus_one_day.year}')
@@ -187,7 +259,10 @@ def test_date_of_birth_fails(date_of_birth_fails, employee):
     employee.date_of_birth = date_of_birth_fails
     assert employee.date_of_birth == ''
 
-# Date of employment passes
+#   Date of employment
+#   Same problematic as in the date of birth
+
+# Date of employment positive tests
 does = []
 today = date.today()
 does.append(f'{today.day}/{today.month}/{today.year}')
@@ -204,7 +279,7 @@ def test_date_of_employment_passes(date_of_employment_passes, employee):
     day, month, year = map(int, date_of_employment_passes.split('/'))
     assert employee.date_of_employment == date(year, month, day)
 
-# Date of employment fails
+# Date of employment negative tests
 does = []
 tomorrow = today + relativedelta(days=1)
 does.append(f'{tomorrow.day}/{tomorrow.month}/{tomorrow.year}')
@@ -220,6 +295,7 @@ does.append('999')
 def test_date_of_employment_fails(date_of_employment_fails, employee):
     employee.date_of_employment = date_of_employment_fails
     assert employee.date_of_employment == ''
+
 
 @pytest.mark.parametrize('base_salary,educational_level,expected_salary', [
     (30000, 0, 30000),
