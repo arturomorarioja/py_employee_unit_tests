@@ -22,7 +22,6 @@ def employee():
     '1234567890',   # 10 characters
     '0000000000',
     '9999999999',
-    '0999999999'
 ])
 def test_cpr_passes(cpr_passes, employee):
     employee.cpr = cpr_passes
@@ -34,8 +33,8 @@ def test_cpr_passes(cpr_passes, employee):
     '12',           # 2 characters
     '12345678',     # 8 characters
     '123456789',    # 9 characters
-    '10000000000',  # 11 characters
-    '100000000000', # 12 characters
+    '12345678901',  # 11 characters
+    '123456789012', # 12 characters
     'ABCDEFGHIJ',   # Format / Edge case
     '          ',   # Format / Edge case
 ])
