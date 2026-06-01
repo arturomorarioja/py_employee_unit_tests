@@ -212,7 +212,7 @@ def test_educational_level_passes(educational_level_passes, educational_level_na
     employee.educational_level = educational_level_passes
     assert educational_level_name == employee.educational_level
 
-# Educational level positive tests
+# Educational level negative tests
 @pytest.mark.parametrize('educational_level_fails', [    
     # Random invalid values covering boundary values (-1, 4) and middle partition values (-10, 10)
     -1, 4, 10, -10  
