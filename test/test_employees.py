@@ -55,29 +55,29 @@ def test_empty_cpr_fails(employee):
 #   ---------------------------------- ------------- --------------------------------------------------------
 #   Invalid partition: empty           empty         empty | 1 character 
 #   Valid partition: 1-30 characters   15 characters empty | 1 character | 2 characters
-#                                      29 characters | 30 characters | 31 characters 
-#   Invalid partition: > 30 characters 45 characters | 31 characters | 32 characters
+#                                                    29 characters | 30 characters | 31 characters 
+#   Invalid partition: > 30 characters 45 characters 30 characters | 31 characters | 32 characters
 
 # First and last name positive tests
 NAMES_PASS = ('name_passes', [
-    'A',                                # 1 character
-    'AB',                               # 2 characters
-    'ABCDEFGHIJKLMNO',                  # 15 characters
-    'abcdefghijklmno',                  # 15 characters
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZABC',    # 29 characters
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZABCD',   # 30 characters
-    'æøåñç',                            # Format
-    'áéíóúàèìòùäëïöü',                  # Format
-    'âêîôû',                            # Format
-    'ÆØÅÑÇ',                            # Format
-    'ÁÉÍÓÚÀÈÌÒÙÄËÏÖÜ',                  # Format
-    'ÂÊÎÔÛ',                            # Format
+    'A',                                            # 1 character
+    'AB',                                           # 2 characters
+    'ABCDEFGHIJKLMNO',                              # 15 characters
+    'abcdefghijklmno',                              # 15 characters
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZABC',                # 29 characters
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZABCD',               # 30 characters
+    'æøåñç',                                        # Format
+    'áéíóúàèìòùäëïöü',                              # Format
+    'âêîôû',                                        # Format
+    'ÆØÅÑÇ',                                        # Format
+    'ÁÉÍÓÚÀÈÌÒÙÄËÏÖÜ',                              # Format
+    'ÂÊÎÔÛ',                                        # Format
     # The following cases are unlikely to be valid, but they are according to requirements.
     # In a real company scenario, the person(s) in charge of writing requirements should be contacted to clarify the situation
-    'a a a a a a a',                    # Format
-    'a-a-a-a-a-a-a',                    # Format
-    '-',                                # Format
-    ' ',                                # Format
+    'a a a a a a a',                                # Format
+    'a-a-a-a-a-a-a',                                # Format
+    '-',                                            # Format
+    ' ',                                            # Format
 ])
 
 @pytest.mark.parametrize(*NAMES_PASS)
@@ -93,6 +93,7 @@ def test_last_name_passes(name_passes, employee):
 # First and last name negative tests
 NAMES_FAIL = ('name_fails', [
     'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE',                  # 31 characters
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF',                 # 32 characters
     'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRS',    # 45 characters
     'abcdef1',                                          # Format / Edge case
     'abcdef/',                                          # Format / Edge case
