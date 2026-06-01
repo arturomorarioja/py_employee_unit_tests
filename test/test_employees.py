@@ -141,17 +141,17 @@ def test_department_fails(employee):
     assert not fake_department == employee.department
 
 
-#   Base salary                                Middle value  Boundary values
-#   ------------------------------------------ ------------- --------------------------------------------------------
-#   Invalid partition: -MAX FLOAT- -0.01           -10000 kr  -MAX FLOAT - 0.01 | -MAX FLOAT | -MAX FLOAT + 0.01
-#                                                             -0.02 | -0.01 | 0
-#   Invalid partition: 0                                0     -0.01 | 0 | 0.01
-#   Invalid partition: 0.01-19999.99 kr             10000 kr  0 | 0.01 | 0.02
-#                                                             19999.98 | 19999.99 | 20000
-#   Valid partition: 20000-100000 kr                60000 kr  19999.99 | 20000 | 20000.01
-#                                                             999999.99 | 100000 | 100000.01
-#   Invalid partition: 100000.01-MAX FLOAT kr      120000 kr  100000 | 100000.01 | 100000.02
-#                                                             MAX FLOAT - 0.01 | MAX FLOAT | MAX FLOAT + 0.01
+#   Base salary                                Middle value Boundary values
+#   ------------------------------------------ ------------ --------------------------------------------------------
+#   Invalid partition: -MAX FLOAT- -0.01          -10000 kr  -MAX FLOAT - 0.01 | -MAX FLOAT | -MAX FLOAT + 0.01
+#                                                            -0.02 | -0.01 | 0
+#   Invalid partition: 0                               0     -0.01 | 0 | 0.01
+#   Invalid partition: 0.01-19999.99 kr            10000 kr  0 | 0.01 | 0.02
+#                                                            19999.98 | 19999.99 | 20000
+#   Valid partition: 20000-100000 kr               60000 kr  19999.99 | 20000 | 20000.01
+#                                                            999999.99 | 100000 | 100000.01
+#   Invalid partition: 100000.01-MAX FLOAT kr     120000 kr  100000 | 100000.01 | 100000.02
+#                                                            MAX FLOAT - 0.01 | MAX FLOAT | MAX FLOAT + 0.01
 
 # Base salary positive tests
 @pytest.mark.parametrize('base_salary_passes', [
@@ -296,21 +296,30 @@ def test_date_of_employment_fails(date_of_employment_fails, employee):
     employee.date_of_employment = date_of_employment_fails
     assert employee.date_of_employment == ''
 
+#   Actual salary
+#   The actual salary is based on two input partitions: base salary and educational level.
+#   Both input partitions have already been tested.
+#   What is necessary to test here is whether the calculation takes place correctly.
+#   The cases to take into account are all positive:
+#   - Educational levels: 0, 1, 2, and 3
 
+# Actual salary positive tests
 @pytest.mark.parametrize('base_salary,educational_level,expected_salary', [
     (30000, 0, 30000),
     (30000, 1, 31220),
     (30000, 2, 32440),
     (30000, 3, 33660),
-    (10000, 0, 0),
-    (110000, 0, 0),
 ])    
 def test_salary(base_salary, educational_level, expected_salary, employee):
     employee.base_salary = base_salary
     employee.educational_level = educational_level
     assert employee.get_salary() == expected_salary
 
-# Discount calculation
+#   Discount
+#   Same problematic as in the date of birth, since the discount calculation is based 
+#   on the years of employment, which must be calculated relative to today (non-deterministic data)
+
+# Discount positive tests
 does = []
 does.append((f'{today.day}/{today.month}/{today.year}', 0))
 t_minus_one_year = today - relativedelta(years=1)
@@ -326,6 +335,10 @@ does.append((f'{t_minus_twenty_three_years.day}/{t_minus_twenty_three_years.mont
 def test_discount(date_of_employment, expected_discount, employee):
     employee.date_of_employment = date_of_employment
     assert employee.get_discount() == expected_discount
+
+#   Shipping costs
+#   Because the shipping costs are calculated based on fixed text values,
+#   it is relevant to test with different spellings (discount should not apply)
 
 @pytest.mark.parametrize('country, expected_shipping_costs', [
     ('Denmark', 0),
