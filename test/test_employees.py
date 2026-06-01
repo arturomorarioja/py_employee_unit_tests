@@ -29,14 +29,16 @@ def test_cpr_passes(cpr_passes, employee):
 
 # CPR negative tests
 @pytest.mark.parametrize('cpr_fails', [
-    '1',            # 1 character
-    '12',           # 2 characters
-    '12345678',     # 8 characters
-    '123456789',    # 9 characters
-    '12345678901',  # 11 characters
-    '123456789012', # 12 characters
-    'ABCDEFGHIJ',   # Format / Edge case
-    '          ',   # Format / Edge case
+    '1',                # 1 character
+    '12',               # 2 characters
+    '12345',            # 5 characters
+    '12345678',         # 8 characters
+    '123456789',        # 9 characters
+    '12345678901',      # 11 characters
+    '123456789012',     # 12 characters
+    '123456789012345',  # 15 characters
+    'ABCDEFGHIJ',       # Format / Edge case
+    '          ',       # Format / Edge case
 ])
 def test_cpr_fails(cpr_fails, employee):
     employee.cpr = cpr_fails
