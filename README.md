@@ -32,9 +32,11 @@ Public methods:
 4. Run the tests: `pytest`
 
 ### Continuous Testing
-A GitHub Actions continuous integration pipeline with two workflows runs upon push:
-- `.github/workflows/unit-tests.yml` runs the unit tests
-- `.github/workflows/sonarqube.yml` runs the static analysis tool SonarQube Cloud
+A GitHub Actions continuous integration workflow with two jobs runs upon push:
+1. Unit tests
+2. SonarQube Cloud scan
+
+The second job depends on the first, so if the unit tests fail, the workflow stops.
 
 ## Tools
 Pytest / Python
