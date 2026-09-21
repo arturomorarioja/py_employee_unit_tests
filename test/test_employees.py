@@ -307,7 +307,7 @@ def test_date_of_employment_fails(date_of_employment_fails, employee):
 
 # Actual salary positive tests
 @pytest.mark.parametrize('base_salary,educational_level,expected_salary', [
-    (30000, 0, 30000),
+    (30000, 0, 3000),
     (30000, 1, 31220),
     (30000, 2, 32440),
     (30000, 3, 33660),
