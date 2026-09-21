@@ -1,7 +1,9 @@
 # Employee - Pytest unit tests
 
 ## Purpose
-Example of Pytest unit tests.
+Example of Pytest unit tests and of continous testing.
+
+### Unit Tests
 
 The system under test is an Employee class with the following attributes:
 - CPR. 10 numeric digits
@@ -23,11 +25,16 @@ Public methods:
 `Discount = years of employment * 0,5`
 - `get_shipping_costs()` calculates and returns the shipping cost percentage, taking into account that  employees  from  Denmark,  Norway  and  Sweden  do  not  pay  shipping  costs,  employees  from  Iceland  and Finland pay 50%, and employees from other countries pay 100%
 
-## Usage
+#### Usage
 1. Create a Python virtual environment: `python -m venv venv`
 2. Activate it: `venv\Scripts\activate`, `.\venv\Scripts\Activate`, `source venv/bin/activate`, depending on OS and CLI
 3. Install the dependencies: `pip install -r requirements.txt`
 4. Run the tests: `pytest`
+
+### Continuous Testing
+A GitHub Actions continuous integration pipeline with two workflows runs upon push:
+- `.github/workflows/unit-tests.yml` runs the unit tests
+- `.github/workflows/sonarqube.yml` runs the static analysis tool SonarQube Cloud
 
 ## Tools
 Pytest / Python
