@@ -9,7 +9,6 @@ on:
       - main
 
 jobs:
-
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
@@ -29,7 +28,6 @@ jobs:
       - name: Run unit tests
         run: pytest test
 
-
   sonarqube:
     name: SonarQube Cloud
     needs: unit-tests
@@ -45,7 +43,3 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v8.2.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
