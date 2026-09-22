@@ -42,4 +42,4 @@ The second job depends on the first, so if the unit tests fail, the workflow sto
 Pytest / Python
 
 ## Author:
-Arturo Mora-Rioja
+Arturo Mora-Rioja.
