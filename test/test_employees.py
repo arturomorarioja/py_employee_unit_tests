@@ -206,7 +206,7 @@ def test_base_salary_zero_fails(employee):
     (0, 'None'),
     (1, 'Primary'),
     (2, 'Secondary'),
-    (3, 'Tertiary')
+    (78, 'Tertiary')
 ])
 def test_educational_level_passes(educational_level_passes, educational_level_name, employee):
     employee.educational_level = educational_level_passes
